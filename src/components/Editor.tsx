@@ -1,8 +1,9 @@
 "use client"; // クライアントサイドで動作（リアルタイム編集・プレビュー）
 
-import { useState, useMemo, useEffect } from "react"; // 状態管理・メモ化・ライフサイクル
+import { useState, useMemo, useEffect, useCallback } from "react"; // 状態管理・メモ化・ライフサイクル・コールバック
 import { marked, Renderer } from "marked"; // Markdown → HTML 変換（クライアント側）
 import { ThemeToggle } from "./ThemeToggle"; // テーマ切替ボタン
+import { AdOverlay } from "./AdOverlay"; // 広告オーバーレイ
 
 /** mailto リンクをプレーンテキストに変換するカスタムレンダラー */
 const renderer = new Renderer();
@@ -15,6 +16,7 @@ renderer.link = ({ href, text }) => {
 export function Editor({ defaultMarkdown }: { defaultMarkdown: string }) {
   const [markdown, setMarkdown] = useState(defaultMarkdown); // Markdown テキスト状態
   const [today, setToday] = useState(""); // 今日の日付（SSR 不一致防止のため useEffect で設定）
+  const [showAd, setShowAd] = useState(false); // 広告オーバーレイの表示状態
 
   useEffect(() => {
     const now = new Date(); // 現在日時を取得
@@ -26,13 +28,21 @@ export function Editor({ defaultMarkdown }: { defaultMarkdown: string }) {
     return marked(markdown, { renderer }) as string; // カスタムレンダラーで mailto を除去
   }, [markdown]);
 
-  /** プレビュー部分のみを印刷（PDF 保存用） */
+  /** PDF ボタンクリック時に広告オーバーレイを表示 */
   const handlePrint = () => {
-    window.print(); // @media print CSS でエディタ側は非表示になる
+    setShowAd(true); // 広告オーバーレイを表示（直接 print しない）
   };
+
+  /** 広告オーバーレイを閉じた後に印刷ダイアログを開く */
+  const handleAdClose = useCallback(() => {
+    setShowAd(false); // オーバーレイを非表示
+    window.print(); // @media print CSS でエディタ側は非表示になる
+  }, []);
 
   return (
     <div className="editor-layout">
+      {/* ===== 広告オーバーレイ ===== */}
+      {showAd && <AdOverlay onClose={handleAdClose} />}
       {/* ===== ヘッダー ===== */}
       <header className="site-header">
         <div className="header-inner">
