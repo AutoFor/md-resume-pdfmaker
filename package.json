@@ -1,0 +1,14 @@
+{
+  "name": "md-resume-pdfmaker",
+  "version": "1.0.0",
+  "description": "Markdown で職務経歴書を管理し、PDF に変換するツール",
+  "private": true,
+  "scripts": {
+    "build": "md-to-pdf resume.md && mv resume.pdf output/resume.pdf",
+    "watch": "nodemon --ext md,css --watch resume.md --watch style.css --exec \"npm run build\""
+  },
+  "devDependencies": {
+    "md-to-pdf": "^5.2.4",
+    "nodemon": "^3.1.0"
+  }
+}
