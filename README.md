@@ -1,55 +1,67 @@
 # md-resume-pdfmaker
 
-Markdown で職務経歴書を管理し、PDF に変換するツール。
+Markdown で職務経歴書を管理し、Web ページとして表示・PDF ダウンロードが可能な Next.js アプリ。
+
+## 機能
+
+- Markdown（`resume.md`）から職務経歴書を自動生成
+- ダークモード / ライトモード切替
+- ブラウザの印刷機能で A4 PDF をダウンロード
+- レスポンシブ対応（モバイル表示）
+- Azure Static Web Apps にデプロイ可能
 
 ## セットアップ
-
-### システム依存（Linux）
-
-Puppeteer（PDF 生成エンジン）に必要なライブラリをインストールします。
-
-```bash
-sudo apt-get install -y libnspr4 libnss3 libatk1.0-0 libatk-bridge2.0-0 \
-  libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 \
-  libxrandr2 libgbm1 libpango-1.0-0 libcairo2 libasound2 libatspi2.0-0
-```
-
-> macOS の場合はこのステップは不要です。
-
-### npm パッケージ
 
 ```bash
 npm install
 ```
 
-## 使い方
+## 開発
 
-### PDF を生成
+```bash
+npm run dev
+```
+
+http://localhost:3000 で確認できます。
+
+## ビルド（静的エクスポート）
 
 ```bash
 npm run build
 ```
 
-`output/resume.pdf` が生成されます。
+`out/` ディレクトリに静的ファイルが生成されます。
 
-### ファイル変更時に自動ビルド
+## PDF ダウンロード
 
-```bash
-npm run watch
-```
+Web ページ上部の「PDF ダウンロード」ボタンをクリックすると、ブラウザの印刷ダイアログが開きます。
+「PDF に保存」を選択すると A4 フォーマットの PDF が生成されます。
 
-`resume.md` または `style.css` の変更を検知して自動で PDF を再生成します。
+## デプロイ（Azure Static Web Apps）
+
+1. Azure Portal で Static Web Apps リソースを作成
+2. デプロイトークンを GitHub リポジトリの Secrets に `AZURE_STATIC_WEB_APPS_API_TOKEN` として設定
+3. `master` ブランチにプッシュすると自動デプロイされます
 
 ## ファイル構成
 
-| ファイル | 説明 |
-|---------|------|
+| ファイル / ディレクトリ | 説明 |
+|----------------------|------|
 | `resume.md` | 職務経歴書の本文（Markdown） |
-| `style.css` | PDF のスタイル（A4・日本語フォント対応） |
-| `output/` | PDF 出力先（Git 管理外） |
+| `src/app/` | Next.js App Router（ページ、レイアウト、CSS） |
+| `src/components/` | React コンポーネント |
+| `src/lib/markdown.ts` | Markdown → HTML 変換パイプライン |
+| `out/` | ビルド出力（Git 管理外） |
 
 ## カスタマイズ
 
 - `resume.md` の内容を自分の経歴に書き換えてください
-- `style.css` でフォントや配色を調整できます
-- `resume.md` の frontmatter で PDF オプション（余白など）を変更できます
+- `src/app/resume.css` でスタイルを調整できます
+- `src/app/globals.css` でテーマカラーを変更できます
+
+## 技術スタック
+
+- [Next.js](https://nextjs.org/) — React フレームワーク（静的エクスポート）
+- [marked](https://marked.js.org/) — Markdown パーサー
+- [gray-matter](https://github.com/jonschlinkert/gray-matter) — Frontmatter パーサー
+- [Azure Static Web Apps](https://azure.microsoft.com/ja-jp/products/app-service/static) — ホスティング
