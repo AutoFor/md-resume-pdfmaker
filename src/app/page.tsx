@@ -1,17 +1,9 @@
-import { getResumeData } from "@/lib/markdown"; // Markdown 処理パイプライン
-import { Header } from "@/components/Header"; // ヘッダーコンポーネント
-import { ResumeContent } from "@/components/ResumeContent"; // 履歴書表示コンポーネント
+import { getResumeMarkdown } from "@/lib/markdown"; // Markdown 読み込み
+import { Editor } from "@/components/Editor"; // 2ペインエディタ
 
-/** メインページ（Server Component — ビルド時に静的生成） */
-export default async function Home() {
-  const { html } = await getResumeData(); // ビルド時に resume.md を HTML に変換
+/** メインページ（Server Component — ビルド時に resume.md を読み込む） */
+export default function Home() {
+  const defaultMarkdown = getResumeMarkdown(); // resume.md の本文を初期値として取得
 
-  return (
-    <>
-      <Header /> {/* ヘッダー（タイトル、テーマ切替、PDF ボタン） */}
-      <main className="main-container">
-        <ResumeContent html={html} /> {/* 履歴書の HTML を表示 */}
-      </main>
-    </>
-  );
+  return <Editor defaultMarkdown={defaultMarkdown} />; // クライアント側で編集＆プレビュー
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from "next"; // メタデータ型
-import { Noto_Sans_JP } from "next/font/google"; // 日本語フォント
+import { Noto_Sans_JP, Noto_Serif_JP } from "next/font/google"; // 日本語フォント
 import "./globals.css"; // グローバルスタイル
 import "./resume.css"; // 履歴書スタイル
 
@@ -7,6 +7,14 @@ const notoSansJP = Noto_Sans_JP({
   subsets: ["latin"], // ラテン文字サブセット
   weight: ["400", "700"], // 標準と太字
   display: "swap", // フォント読み込み中はフォールバック表示
+  variable: "--font-sans", // CSS 変数として公開（UI 用）
+});
+
+const notoSerifJP = Noto_Serif_JP({
+  subsets: ["latin"], // ラテン文字サブセット
+  weight: ["400", "700"], // 標準と太字
+  display: "swap", // フォント読み込み中はフォールバック表示
+  variable: "--font-serif", // CSS 変数として公開（履歴書本文用）
 });
 
 export const metadata: Metadata = {
@@ -37,7 +45,9 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={notoSansJP.className}>{children}</body>
+      <body className={`${notoSansJP.variable} ${notoSerifJP.variable} ${notoSansJP.className}`}>
+        {children}
+      </body>
     </html>
   );
 }
