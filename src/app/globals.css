@@ -1,6 +1,6 @@
 /* ===== CSS 変数（ライトモード） ===== */
 :root {
-  --color-bg: #f5f5f5;
+  --color-bg: #f0f2f5;
   --color-surface: #ffffff;
   --color-text: #333333;
   --color-text-secondary: #666666;
@@ -10,20 +10,28 @@
   --color-border-light: #bdc3c7;
   --color-table-header: #ecf0f1;
   --color-shadow: rgba(0, 0, 0, 0.1);
+  --color-editor-bg: #1e1e1e;
+  --color-editor-text: #d4d4d4;
+  --color-pane-header: #e8eaed;
+  --color-pane-header-text: #555555;
 }
 
 /* ===== CSS 変数（ダークモード） ===== */
 [data-theme="dark"] {
-  --color-bg: #1a1a2e;
-  --color-surface: #16213e;
+  --color-bg: #0d1117;
+  --color-surface: #161b22;
   --color-text: #e0e0e0;
   --color-text-secondary: #a0a0a0;
   --color-primary: #7ec8e3;
   --color-primary-light: #9ed8eb;
-  --color-border: #2a2a4a;
+  --color-border: #30363d;
   --color-border-light: #3a3a5a;
   --color-table-header: #1f2b47;
-  --color-shadow: rgba(0, 0, 0, 0.3);
+  --color-shadow: rgba(0, 0, 0, 0.4);
+  --color-editor-bg: #0d1117;
+  --color-editor-text: #c9d1d9;
+  --color-pane-header: #161b22;
+  --color-pane-header-text: #8b949e;
 }
 
 /* ===== リセット ===== */
@@ -35,121 +43,191 @@
   padding: 0;
 }
 
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
 /* ===== ベーススタイル ===== */
 body {
   background-color: var(--color-bg);
   color: var(--color-text);
-  line-height: 1.7;
-  font-size: 16px;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+/* ===== エディタ全体レイアウト ===== */
+.editor-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
 /* ===== ヘッダー ===== */
 .site-header {
   background-color: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
-  box-shadow: 0 1px 3px var(--color-shadow);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  flex-shrink: 0;
 }
 
 .header-inner {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 12px 24px;
+  padding: 8px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
 .site-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--color-primary);
-  border: none;
-  padding: 0;
-  margin: 0;
-  text-align: left;
+  letter-spacing: -0.02em;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 /* ===== テーマ切替ボタン ===== */
 .theme-toggle {
   background: none;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 6px 10px;
-  font-size: 18px;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 16px;
   cursor: pointer;
-  transition: border-color 0.2s ease;
   line-height: 1;
+  transition: border-color 0.2s;
 }
 
 .theme-toggle:hover {
   border-color: var(--color-primary);
 }
 
-/* ===== PDF ダウンロードボタン ===== */
+/* ===== PDF ボタン ===== */
 .pdf-button {
   background-color: var(--color-primary);
   color: #ffffff;
   border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 14px;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s;
 }
 
 .pdf-button:hover {
   opacity: 0.85;
 }
 
-/* ===== メインコンテナ ===== */
-.main-container {
-  max-width: 900px;
-  margin: 32px auto;
-  padding: 0 24px;
+/* ===== 2ペインレイアウト ===== */
+.split-pane {
+  display: flex;
+  flex: 1;
+  min-height: 0;
 }
 
-/* ===== レスポンシブ（モバイル対応） ===== */
-@media (max-width: 640px) {
-  .header-inner {
-    padding: 10px 16px;
+.pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.pane-editor {
+  border-right: 1px solid var(--color-border);
+}
+
+/* ===== ペインヘッダー ===== */
+.pane-header {
+  padding: 6px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: var(--color-pane-header);
+  color: var(--color-pane-header-text);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+/* ===== Markdown テキストエリア ===== */
+.markdown-textarea {
+  flex: 1;
+  width: 100%;
+  padding: 20px;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: "Cascadia Code", "Fira Code", "Consolas", "Monaco", monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  background-color: var(--color-editor-bg);
+  color: var(--color-editor-text);
+  tab-size: 2;
+}
+
+.markdown-textarea::placeholder {
+  color: #555;
+}
+
+/* ===== プレビューペイン ===== */
+.preview-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  background-color: var(--color-bg);
+}
+
+/* ===== レスポンシブ（モバイル: 縦並び） ===== */
+@media (max-width: 768px) {
+  .split-pane {
+    flex-direction: column;
   }
 
-  .site-title {
-    font-size: 16px;
-  }
-
-  .pdf-button {
-    padding: 6px 12px;
-    font-size: 13px;
-  }
-
-  .main-container {
-    margin: 16px auto;
-    padding: 0 12px;
+  .pane-editor {
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    max-height: 40vh;
   }
 }
 
-/* ===== 印刷時はヘッダーを非表示 ===== */
+/* ===== 印刷時: エディタ・ヘッダーを非表示、プレビューのみ印刷 ===== */
 @media print {
-  .site-header {
+  .site-header,
+  .pane-editor,
+  .pane-header {
     display: none !important;
   }
 
-  .main-container {
-    max-width: none;
-    margin: 0;
+  html,
+  body {
+    height: auto;
+    overflow: visible;
+  }
+
+  .editor-layout {
+    display: block;
+    height: auto;
+  }
+
+  .split-pane {
+    display: block;
+  }
+
+  .pane-preview {
+    display: block;
+  }
+
+  .preview-scroll {
+    overflow: visible;
     padding: 0;
+    background-color: #ffffff;
   }
 
   body {
